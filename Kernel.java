@@ -39,6 +39,7 @@ public class Kernel {
         while (!filaEventos.isEmpty()) {
             // Retira o próximo evento da fila de eventos
             Evento evento = filaEventos.poll();
+            tempoExecucaoTotal += 20; //Adicione 20 unidades de tempo de Delay entre cada processo
             // Atualiza o relógio global com o timestamp do evento
             relGlobal.setData(evento.getTimeStamp());
 
@@ -59,13 +60,17 @@ public class Kernel {
 
             // Atualiza as estatísticas
             tempoExecucaoTotal += tempoExecucaoEvento;
-
+            
+            
             // Atualiza estatísticas de ocupação e ociosidade da CPU
             if (evento instanceof Processo) {
                 tempoOcupacaoCPU += tempoExecucaoEvento;
             } else {
                 tempoOciosidadeCPU += tempoExecucaoEvento;
             }
+            
+            tempoOciosidadeCPU = tempoExecucaoTotal - tempoOcupacaoCPU;
+         
         }
         apresentarEstatisticas();
     }
