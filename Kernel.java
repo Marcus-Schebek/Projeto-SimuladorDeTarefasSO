@@ -1,13 +1,14 @@
 import java.util.PriorityQueue;
+import java.util.Queue;
 
 public class Kernel {
     // Fila de eventos a serem processados
     private PriorityQueue<Evento> filaEventos;
+    private Queue<CPU> cpus;
     // Variáveis para estatísticas
     private RelogioGlobal relGlobal;  
     private int tempoExecucaoTotal;
-    private int tempoOcupacaoCPU;
-    private int tempoOciosidadeCPU;
+
 
     // Tamanho da RAM e do Swap
     private int tamanhoRAM;
@@ -16,12 +17,11 @@ public class Kernel {
 
 
     // Construtor da classe Kernel
-    public Kernel(PriorityQueue<Evento> filaEventos, RelogioGlobal relGlobal, int tamanhoRAM) {
+    public Kernel(PriorityQueue<Evento> filaEventos, RelogioGlobal relGlobal, int tamanhoRAM, Queue<CPU> cpus) {
         this.filaEventos = filaEventos;
         this.relGlobal = relGlobal;
         this.tempoExecucaoTotal = 0;
-        this.tempoOcupacaoCPU = 0;
-        this.tempoOciosidadeCPU = 0;
+        this.cpus = cpus;
 
         // Configuração do tamanho da RAM
         this.tamanhoRAM = tamanhoRAM;
@@ -38,43 +38,45 @@ public class Kernel {
     public void run() {
         while (!filaEventos.isEmpty()) {
             // Retira o próximo evento da fila de eventos
-            Evento evento = filaEventos.poll();
-            tempoExecucaoTotal += 20; //Adicione 20 unidades de tempo de Delay entre cada processo
+            Evento evento = filaEventos.poll();    
             // Atualiza o relógio global com o timestamp do evento
             relGlobal.setData(evento.getTimeStamp());
-
+            // Verifica se há alguma CPU disponível
+            if (cpus.isEmpty()) {
+                System.out.println("Nenhuma CPU disponível.");
+                continue;
+            }
+        
+            // Retira a próxima CPU da fila de CPUs
+            CPU cpu = cpus.poll();
+        
             // Registra o início da execução do evento
             int inicioExecucao = relGlobal.getData();
-
+        
             // Executa o evento apenas se houver memória disponível
             if (verificarMemoriaDisponivel()) {
+                cpu.atualizaTempos(false);
                 evento.execute();
+                cpu.atualizaTempos(true);
             } else {
                 // Se não houver memória disponível, o evento é ignorado
                 System.out.println("Ignorando evento devido à falta de memória.");
             }
-
+        
             // Registra o fim da execução do evento
             int fimExecucao = relGlobal.getData();
             int tempoExecucaoEvento = fimExecucao - inicioExecucao;
-
+        
             // Atualiza as estatísticas
             tempoExecucaoTotal += tempoExecucaoEvento;
-            
-            
-            // Atualiza estatísticas de ocupação e ociosidade da CPU
-            if (evento instanceof Processo) {
-                tempoOcupacaoCPU += tempoExecucaoEvento;
-            } else {
-                tempoOciosidadeCPU += tempoExecucaoEvento;
-            }
-            
-            tempoOciosidadeCPU = tempoExecucaoTotal - tempoOcupacaoCPU;
-         
+        
+            // Coloca a CPU de volta na fila
+            cpus.add(cpu);
         }
+
         apresentarEstatisticas();
     }
-
+    
     // Método para verificar se há memória disponível para o evento
     private boolean verificarMemoriaDisponivel() {
         return tamanhoRAM > 0;
@@ -99,7 +101,11 @@ public class Kernel {
     private void apresentarEstatisticas() {
         System.out.println("Estatísticas coletadas:");
         System.out.println("Tempo total de execução simulada: " + tempoExecucaoTotal + " unidades de tempo");
-        System.out.println("Tempo de ocupação da CPU: " + tempoOcupacaoCPU + " unidades de tempo");
-        System.out.println("Tempo de ociosidade da CPU: " + tempoOciosidadeCPU + " unidades de tempo");
+        for (CPU cpu : cpus) {
+            int tempoOcupacao = cpu.getTempoOcupado();
+            int tempoOciosidade = cpu.getTempoOcioso();
+            System.out.println("Tempo de ocupação da CPU: " + tempoOcupacao);
+            System.out.println("Tempo de ociosidade da CPU: " + tempoOciosidade);
+        }
     }
 }
