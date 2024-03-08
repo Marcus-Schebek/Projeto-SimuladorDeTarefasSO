@@ -3,7 +3,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.PriorityQueue;
 import java.util.Queue;
-import java.util.Comparator;
 import java.util.LinkedList;
 
 // Classe principal que contém o método main
@@ -27,7 +26,7 @@ public class Main {
             cpus.add(new CPU(4, relGlobal)); // Substitua 1 pela velocidade desejada da CPU
         }
         // Cria uma instância do Kernel com a fila de eventos
-        Kernel kernel = new Kernel(filaEventos, relGlobal, 1, cpus);
+        Kernel kernel = new Kernel(filaEventos, relGlobal, 8, cpus);
         // Executa a simulação
         kernel.run();
     }

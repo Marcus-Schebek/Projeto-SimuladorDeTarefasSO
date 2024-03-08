@@ -1,15 +1,15 @@
 // Classe que representa o relógio global
 class RelogioGlobal {
     // Variável estática para armazenar a data atual
-    private static int dataAtual;
+    private static long dataAtual;
 
     // Setter para atualizar a data atual
-    public static void setData(int newData) {
+    public static void setData(long newData) {
         dataAtual = newData;
     }
 
     // Getter para obter a data atual
-    public static int getData() {
+    public static long getData() {
         return dataAtual;
     }
 }

@@ -8,8 +8,7 @@ public class Kernel {
     // Variáveis para estatísticas
     private RelogioGlobal relGlobal;  
     private int tempoExecucaoTotal;
-    private int tempoOcupacaoCPU;
-    private int tempoOciosidadeCPU;
+
 
     // Tamanho da RAM e do Swap
     private int tamanhoRAM;
@@ -22,8 +21,7 @@ public class Kernel {
         this.filaEventos = filaEventos;
         this.relGlobal = relGlobal;
         this.tempoExecucaoTotal = 0;
-        this.tempoOcupacaoCPU = 0;
-        this.tempoOciosidadeCPU = 0;
+
         this.cpus = cpus;
 
         // Configuração do tamanho da RAM
@@ -54,29 +52,27 @@ public class Kernel {
             CPU cpu = cpus.poll();
         
             // Registra o início da execução do evento
-            int inicioExecucao = relGlobal.getData();
+            long inicioExecucao = relGlobal.getData() + System.currentTimeMillis();
         
             if (verificarMemoriaDisponivel(evento)) {
                 cpu.atualizaTempos(false);
                 evento.execute();
                 cpu.atualizaTempos(true);
+                 // Registra o fim da execução do evento
+                long fimExecucao = relGlobal.getData() + System.currentTimeMillis();
+                long tempoExecucaoEvento = fimExecucao - inicioExecucao;
+                // Atualiza as estatísticas
+                tempoExecucaoTotal += tempoExecucaoEvento;
+                cpu.setTempoOcupado(tempoExecucaoTotal);
             } else {
                 // Se não houver memória disponível, o evento é ignorado
                 System.out.println("Ignorando evento devido à falta de memória.");
             }
-            
-        
-            // Registra o fim da execução do evento
-            int fimExecucao = relGlobal.getData();
-            int tempoExecucaoEvento = fimExecucao - inicioExecucao;
-        
-            // Atualiza as estatísticas
-            tempoExecucaoTotal += tempoExecucaoEvento;
         
             // Coloca a CPU de volta na fila
             cpus.add(cpu);
         }
-
+    
         apresentarEstatisticas();
     }
     
@@ -93,28 +89,14 @@ public class Kernel {
         }
     }
     
-    // Método para liberar memória após a execução do evento
-    public void liberarMemoria(int tamanho) {
-        tamanhoRAM += tamanho;
-    }
-
-    // Método para alocar memória para o evento
-    public boolean alocarMemoria(int tamanho) {
-        if (tamanho <= tamanhoRAM) {
-            tamanhoRAM -= tamanho;
-            return true;
-        } else {
-            return false;
-        }
-    }
 
     // Método para apresentar estatísticas ao final da simulação
     private void apresentarEstatisticas() {
         System.out.println("Estatísticas coletadas:");
-        System.out.println("Tempo total de execução simulada: " + tempoExecucaoTotal + " unidades de tempo");
         for (CPU cpu : cpus) {
-            int tempoOcupacao = cpu.getTempoOcupado();
-            int tempoOciosidade = cpu.getTempoOcioso();
+            long tempoOciosidade = cpu.getTempoOcioso();
+            long tempoOcupacao = cpu.getTempoOcupado();
+
             System.out.println("Tempo de ocupação da CPU: " + tempoOcupacao);
             System.out.println("Tempo de ociosidade da CPU: " + tempoOciosidade);
         }

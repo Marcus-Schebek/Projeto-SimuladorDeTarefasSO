@@ -61,7 +61,8 @@ class Processo extends Evento {
 
         // Cálculo do tempo de execução com base nas instruções e na velocidade de cada CPU
         int velocidadeCPU = 100;  // Substitua pelo valor real da velocidade da CPU
-        int tempoExecucao = (milhoesInstrucoes * 1000) / velocidadeCPU;  // Convertido para milissegundos
+        long tempoExecucao = (milhoesInstrucoes * 1000) / velocidadeCPU;  // Convertido para milissegundos
+        System.out.println(tempoExecucao);
 
         // Atualização do relógio global com o tempo de execução do processo
         RelogioGlobal.setData(getTimeStamp() + tempoExecucao);

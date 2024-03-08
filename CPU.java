@@ -1,8 +1,8 @@
 public class CPU {
     private int velQuantumCPU;
-    private int tempoOciosidade;
-    private int tempoOcupacao;
-    private int ultimoUpdate;
+    private long tempoOciosidade;
+    private long tempoOcupacao;
+    private long ultimoUpdate;
     private RelogioGlobal relGlobal;
 
     public CPU(int velCpu, RelogioGlobal relGlobal){
@@ -17,12 +17,16 @@ public class CPU {
         return this.velQuantumCPU;
     }
 
-    public int getTempoOcioso(){
+    public long getTempoOcioso(){
         return this.tempoOciosidade;
     }
 
-    public int getTempoOcupado(){
+    public long getTempoOcupado(){
         return this.tempoOcupacao;
+    }
+
+    public void setTempoOcupado(int tempoOcupado){
+        this.tempoOcupacao += tempoOcupado;
     }
 
     public void setVelQuantumCPU(int velQuantumCPU){
@@ -31,8 +35,8 @@ public class CPU {
 
     public void atualizaTempos(boolean ociosidade) {
         @SuppressWarnings("static-access")
-        int tempoAtual = relGlobal.getData();
-        int deltaTempo = tempoAtual - ultimoUpdate;
+        long tempoAtual = relGlobal.getData();
+        long deltaTempo = tempoAtual - ultimoUpdate;
         if (ociosidade) {
             tempoOciosidade += deltaTempo;
         } else {
