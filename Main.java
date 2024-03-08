@@ -18,9 +18,9 @@ public class Main {
         String arquivoCSV = args[0];
         // Lê o arquivo CSV e cria a fila de eventos
         PriorityQueue<Processo> filaEventos = lerArquivoCSV(arquivoCSV);
-        printFilaEventos(filaEventos);
         // Instancia o Relogio Global
         RelogioGlobal relGlobal = new RelogioGlobal();
+        //Instancia a lista de CPUS
         Queue<CPU> cpus = new LinkedList<>();
         for (int i = 0; i < 4; i++) {
             cpus.add(new CPU(4, relGlobal)); // Substitua 1 pela velocidade desejada da CPU
@@ -67,11 +67,5 @@ public class Main {
         }
 
         return filaEventos;
-    }
-    private static void printFilaEventos(PriorityQueue<Processo> filaEventos) {
-        System.out.println("Fila de Eventos:");
-        for (Processo evento : filaEventos) {
-            System.out.println(evento.getPrioridade());
-        }
     }
 }

@@ -33,6 +33,7 @@ public class CPU {
         this.velQuantumCPU = velQuantumCPU;
     }
 
+    //Pode ser reutilizada futuramente para outros tipos de processos
     public void atualizaTempos(boolean ociosidade) {
         @SuppressWarnings("static-access")
         long tempoAtual = relGlobal.getData();

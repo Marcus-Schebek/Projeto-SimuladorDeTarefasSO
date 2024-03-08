@@ -4,12 +4,11 @@ import java.util.Queue;
 public class Kernel {
     // Fila de eventos a serem processados
     private PriorityQueue<Processo> filaEventos;
+    // Fila de CPUS
     private Queue<CPU> cpus;
     // Variáveis para estatísticas
     private RelogioGlobal relGlobal;  
     private int tempoExecucaoTotal;
-
-
     // Tamanho da RAM e do Swap
     private int tamanhoRAM;
     private int tamanhoSwap;
@@ -97,8 +96,8 @@ public class Kernel {
             long tempoOciosidade = cpu.getTempoOcioso();
             long tempoOcupacao = cpu.getTempoOcupado();
 
-            System.out.println("Tempo de ocupação da CPU: " + tempoOcupacao);
-            System.out.println("Tempo de ociosidade da CPU: " + tempoOciosidade);
+            System.out.println("Tempo de ocupação da CPU: " + tempoOcupacao + " Unidades de tempo");
+            System.out.println("Tempo de ociosidade da CPU: " + tempoOciosidade + " Unidades de tempo");
         }
     }
 }

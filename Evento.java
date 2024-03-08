@@ -1,8 +1,6 @@
 
 // Classe abstrata que representa um evento no simulador
 abstract class Evento {
-    // Relógio global compartilhado por todos os eventos
-    protected static int relGlobal;
     // Timestamp do evento
     protected int timeStamp;
 
