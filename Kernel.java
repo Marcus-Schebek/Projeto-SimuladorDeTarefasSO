@@ -41,7 +41,7 @@ public class Kernel {
     public void run() {
         while (!filaEventos.isEmpty()) {
             // Retira o próximo evento da fila de eventos
-            Evento evento = filaEventos.poll();    
+            Processo evento = filaEventos.poll();    
             // Atualiza o relógio global com o timestamp do evento
             relGlobal.setData(evento.getTimeStamp());
             // Verifica se há alguma CPU disponível
@@ -56,8 +56,7 @@ public class Kernel {
             // Registra o início da execução do evento
             int inicioExecucao = relGlobal.getData();
         
-            // Executa o evento apenas se houver memória disponível
-            if (verificarMemoriaDisponivel()) {
+            if (verificarMemoriaDisponivel(evento)) {
                 cpu.atualizaTempos(false);
                 evento.execute();
                 cpu.atualizaTempos(true);
@@ -65,6 +64,7 @@ public class Kernel {
                 // Se não houver memória disponível, o evento é ignorado
                 System.out.println("Ignorando evento devido à falta de memória.");
             }
+            
         
             // Registra o fim da execução do evento
             int fimExecucao = relGlobal.getData();
@@ -81,10 +81,18 @@ public class Kernel {
     }
     
     // Método para verificar se há memória disponível para o evento
-    private boolean verificarMemoriaDisponivel() {
-        return tamanhoRAM > 0;
+    private boolean verificarMemoriaDisponivel(Processo processo) {
+        // Verifica se a memória RAM necessária para o processo é maior que a memória RAM disponível
+        if (processo.getRam() > this.tamanhoRAM) {
+            return false;
+        } else {
+            // Se a memória RAM necessária para o processo for menor ou igual à memória RAM disponível,
+            // subtrai a memória RAM necessária para o processo da memória RAM disponível
+            this.tamanhoRAM -= processo.getRam();
+            return true;
+        }
     }
-
+    
     // Método para liberar memória após a execução do evento
     public void liberarMemoria(int tamanho) {
         tamanhoRAM += tamanho;
