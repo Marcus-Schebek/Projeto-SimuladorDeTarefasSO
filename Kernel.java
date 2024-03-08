@@ -3,12 +3,13 @@ import java.util.Queue;
 
 public class Kernel {
     // Fila de eventos a serem processados
-    private PriorityQueue<Evento> filaEventos;
+    private PriorityQueue<Processo> filaEventos;
     private Queue<CPU> cpus;
     // Variáveis para estatísticas
     private RelogioGlobal relGlobal;  
     private int tempoExecucaoTotal;
-
+    private int tempoOcupacaoCPU;
+    private int tempoOciosidadeCPU;
 
     // Tamanho da RAM e do Swap
     private int tamanhoRAM;
@@ -17,10 +18,12 @@ public class Kernel {
 
 
     // Construtor da classe Kernel
-    public Kernel(PriorityQueue<Evento> filaEventos, RelogioGlobal relGlobal, int tamanhoRAM, Queue<CPU> cpus) {
+    public Kernel(PriorityQueue<Processo> filaEventos, RelogioGlobal relGlobal, int tamanhoRAM, Queue<CPU> cpus) {
         this.filaEventos = filaEventos;
         this.relGlobal = relGlobal;
         this.tempoExecucaoTotal = 0;
+        this.tempoOcupacaoCPU = 0;
+        this.tempoOciosidadeCPU = 0;
         this.cpus = cpus;
 
         // Configuração do tamanho da RAM

@@ -18,7 +18,8 @@ public class Main {
         // Obtém o caminho do arquivo CSV a partir dos argumentos
         String arquivoCSV = args[0];
         // Lê o arquivo CSV e cria a fila de eventos
-        PriorityQueue<Evento> filaEventos = lerArquivoCSV(arquivoCSV);
+        PriorityQueue<Processo> filaEventos = lerArquivoCSV(arquivoCSV);
+        printFilaEventos(filaEventos);
         // Instancia o Relogio Global
         RelogioGlobal relGlobal = new RelogioGlobal();
         Queue<CPU> cpus = new LinkedList<>();
@@ -32,8 +33,16 @@ public class Main {
     }
 
     // Método para ler o arquivo CSV e criar a fila de eventos
-    private static PriorityQueue<Evento> lerArquivoCSV(String arquivoCSV) {
-        PriorityQueue<Evento> filaEventos = new PriorityQueue<>(Comparator.comparingInt(Evento::getTimeStamp));
+    private static PriorityQueue<Processo> lerArquivoCSV(String arquivoCSV) {
+        PriorityQueue<Processo> filaEventos = new PriorityQueue<>((p1, p2) -> {
+            if (p1.getPrioridade() != p2.getPrioridade()) {
+                // Se as prioridades são diferentes, dê preferência ao processo com maior prioridade
+                return Integer.compare(p2.getPrioridade(), p1.getPrioridade());
+            } else {
+                // Se as prioridades são iguais, use o timestamp para ordenar
+                return Integer.compare(p1.getTimeStamp(), p2.getTimeStamp());
+            }
+        });
 
         try (BufferedReader br = new BufferedReader(new FileReader(arquivoCSV))) {
             String linha;
@@ -59,5 +68,11 @@ public class Main {
         }
 
         return filaEventos;
+    }
+    private static void printFilaEventos(PriorityQueue<Processo> filaEventos) {
+        System.out.println("Fila de Eventos:");
+        for (Processo evento : filaEventos) {
+            System.out.println(evento.getPrioridade());
+        }
     }
 }
